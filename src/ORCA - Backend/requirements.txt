@@ -4,3 +4,4 @@ astrapy
 dotenv
 fastapi
 groq
+"duckduckgo-search langchain-community"

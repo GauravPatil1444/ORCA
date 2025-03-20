@@ -1,5 +1,9 @@
+from dotenv import load_dotenv
 from groq import Groq
 import os
+from ddg_agent import searchtool
+
+load_dotenv()
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 groq_client = Groq(api_key=GROQ_API_KEY)
@@ -26,5 +30,9 @@ def Agent(question: str, collection):
             ],
             model="llama-3.1-8b-instant",
         )
+        res = chat_completion.choices[0].message.content
+        if res == "404":
+            return searchtool(question)
+        else:
+            return res
         
-        return chat_completion.choices[0].message.content

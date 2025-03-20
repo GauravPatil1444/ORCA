@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 from astrapy import Database
 from upload import upload_data
-from Agent import Agent
+from astra_agent import Agent
 from astrapy.client import DataAPIClient
 
 load_dotenv()
@@ -39,9 +39,6 @@ class UploadRequest(BaseModel):
 
 @app.post("/upload")
 async def upload(upload_request: UploadRequest):
-    """
-    API endpoint to create a collection and upload client-provided data.
-    """
     db = get_db()
     try:
         upload_data(db, upload_request.collection_name, upload_request.data)
@@ -49,18 +46,18 @@ async def upload(upload_request: UploadRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-class LegalQuery(BaseModel):
+class searchData(BaseModel):
     data: str
     collection_name: str
 
 @app.post("/search")
-async def ask_orca(query: LegalQuery, db: Database = Depends(get_db)):
+async def ask_orca(req: searchData, db: Database = Depends(get_db)):
     try:
-        collection = db.get_collection(query.collection_name)
+        collection = db.get_collection(req.collection_name)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Invalid collection: {str(e)}")
 
-    response = Agent(query.data, collection)
+    response = Agent(req.data, collection)
     
     return {"response": response}
 
