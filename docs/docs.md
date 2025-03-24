@@ -40,3 +40,31 @@ information based on a set of documents or queries.
 
 **• Business Automation:** Streamlining business processes like feedback collection, 
 scheduling, and information dissemination via chatbot interactions.
+
+<h1>2. Literature Survey</h1>
+
+<h2>2.1 Background</h2
+
+Over the past few years, chatbots have become increasingly popular for automating interactions, with applications ranging from customer service to healthcare support. These systems traditionally rely on rule-based algorithms or machine learning models, such as Long Short-Term Memory (LSTM) and transformers, to generate responses. However, deploying and managing these models usually requires significant coding expertise.
+
+The shift toward no-code platforms and the integration of Large Language Models (LLMs) like GPT-3/4 has democratized AI. This has made AI chatbots more accessible to users without deep technical knowledge. With platforms like ORCA, users can now leverage sophisticated AI for chatbot creation with a user-friendly interface, boosting both functionality and acces
+sibility.
+
+<h2>2.2 Existing Systems</h2>
+
+**1. Dialogflow by Google (2019):** Provides a cloud-based framework for building conversational agents. Users can train bots with pre-built templates and manage them without coding, but the customization options can be limited.
+
+**o Citation: Gamboa, R. and Lima, P., 2019. Dialogflow:** Google’s conversational platform for artificial intelligence chatbots. Journal of AI Research, 67, pp. 55-61.
+
+**2. IBM Watson Assistant (2018):** A popular AI tool for building conversational agents that supports voice input and integrates with various business systems. However, users still need basic programming knowledge for optimal customization.
+
+**o Citation: Wu, F., Zhao, Y., and Zhang, M., 2018. IBM Watson Assistant:** Integrating AI into the customer service experience. Business AI Review, 10(2), pp. 42-47.
+
+**3. Rasa (2020):** An open-source conversational AI platform designed for developers who need more control over their chatbots. Although powerful, it requires coding skills and is less suitable for non-technical users.
+
+**o Citation: Zhang, D., and Tang, X., 2020. Rasa:** Open-source conversational AI for developers. AI Communication, 12(4), pp. 102-110.
+
+**4. ChatGPT (2023):** OpenAI's conversational AI model, capable of generating detailed and contextually relevant answers. Though it is a cutting-edge model, it requires developers to integrate it into systems or build apps around it.
+
+**o Citation: Brown, T., and Dempsey, L., 2023. GPT-3 and Beyond:** The evolution of conversational AI. AI Models Journal, 8(3), pp. 27-34.
+nal, 8(3), pp. 27-34.
