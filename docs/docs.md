@@ -86,7 +86,7 @@ nal, 8(3), pp. 27-34.
 • AI Processing: Integration with Groq's inference engine for LLM-based responses 
 • Third-party Integrations: API connectors for third-party service integration 
 
-##3.2 System Design 
+## 3.2 System Design 
 The system will follow a modular design that supports both cloud deployment. Here’s an 
 overview of the architecture: 
 
@@ -99,6 +99,7 @@ overview of the architecture:
 <h1 align="center">  
   <img src="https://github.com/GauravPatil1444/ORCA/blob/main/docs/images/OWST%20Architecture.png?raw=true" width="fit-content">
 </h1>
+
 **1. User Interface (Web, Mobile, Desktop):** 
 o Interface to create and configure the chatbot, manage knowledge sources, and 
 deploy the bot. 
