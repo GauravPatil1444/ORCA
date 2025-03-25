@@ -68,3 +68,69 @@ sibility.
 
 **o Citation: Brown, T., and Dempsey, L., 2023. GPT-3 and Beyond:** The evolution of conversational AI. AI Models Journal, 8(3), pp. 27-34.
 nal, 8(3), pp. 27-34.
+
+<h1>3.Methodology </h1>
+
+## 3.1 Hardware and Software Requirements 
+**Hardware:**
+• Minimum 4GB RAM 
+• Multi-core processor (Intel i3 or equivalent) 
+• Local deployment support via standard desktop/laptop 
+• Cloud-based hosting for scalability (e.g., AWS, Google Cloud, or Microsoft Azure) 
+
+**Software:** 
+• Backend: Python, FastAPI/Flask 
+• Frontend: React/React Native 
+• Database & Hosting: Firebase 
+• Deployment & Scaling: Docker 
+• AI Processing: Integration with Groq's inference engine for LLM-based responses 
+• Third-party Integrations: API connectors for third-party service integration 
+
+##3.2 System Design 
+The system will follow a modular design that supports both cloud deployment. Here’s an 
+overview of the architecture: 
+
+**Retrieval Augmented Generation (RAG) Architecture:**
+![RAG Architecture]("https://github.com/GauravPatil1444/ORCA/blob/main/docs/images/RAG.png?raw=true")
+ 
+**Organizational Website Search Tool (OWST) Architecture:**
+![OWST Architecture]("https://github.com/GauravPatil1444/ORCA/blob/main/docs/images/OWST.png?raw=true")
+
+**1. User Interface (Web, Mobile, Desktop):** 
+o Interface to create and configure the chatbot, manage knowledge sources, and 
+deploy the bot. 
+
+**2. Backend System (FastAPI):**
+o Manages interactions between the UI, the AI processing layer, and external 
+systems. 
+
+**3. AI Engine (Groq Inference):** 
+o Responsible for processing user queries and providing responses using pre
+configured LLMs. 
+
+**4. Database (Firebase-Firestore):**
+o Stores user-defined configurations, chatbot data, knowledge bases, and 
+interaction logs. 
+
+**5. API Integration:** 
+o Allows external services to connect with ORCA-powered chatbots via REST 
+APIs.
+
+**6. Containerization (Docker):** 
+o Ensures easy deployment and scaling in both cloud and on-premise 
+environments. 
+
+## 3.3 Algorithm 
+Cosine-Similarity Retrieval Algorithm: This algorithm measures the similarity between a 
+query and a set of possible responses by calculating the cosine of the angle between their 
+vector representations. By utilizing embeddings from pre-trained language models, the 
+system can rank responses based on relevance, improving the chatbot's contextual 
+understanding. 
+
+**• Step 1:** Extract the text embeddings of the user query and possible response 
+candidates. 
+
+**• Step 2:** Compute the cosine similarity between the query embedding and each 
+response embedding. 
+
+**• Step 3:** Select the response with the highest similarity score as the chatbot’s answer.
