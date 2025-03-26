@@ -92,12 +92,12 @@ overview of the architecture:
 
 **Retrieval Augmented Generation (RAG) Architecture:**
 <h1 align="center">  
-  <img src="https://github.com/GauravPatil1444/ORCA/blob/main/docs/images/RAG%20Architecture.png?raw=true" width="fit-content">
+  <img src="https://github.com/GauravPatil1444/Projects/blob/master/RAG%20Architecture.png?raw=true" width="fit-content">
 </h1>
  
 **Organizational Website Search Tool (OWST) Architecture:**
 <h1 align="center">  
-  <img src="https://github.com/GauravPatil1444/ORCA/blob/main/docs/images/OWST%20Architecture.png?raw=true" width="fit-content">
+  <img src="https://github.com/GauravPatil1444/Projects/blob/master/OWST%20Architecture.png?raw=true" width="fit-content">
 </h1>
 
 **1. User Interface (Web, Mobile, Desktop):** 
