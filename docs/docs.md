@@ -72,19 +72,19 @@ nal, 8(3), pp. 27-34.
 <h1>3.Methodology </h1>
 
 ## 3.1 Hardware and Software Requirements 
-**Hardware:**
-• Minimum 4GB RAM 
-• Multi-core processor (Intel i3 or equivalent) 
-• Local deployment support via standard desktop/laptop 
-• Cloud-based hosting for scalability (e.g., AWS, Google Cloud, or Microsoft Azure) 
+**Hardware:**  
+• Minimum 4GB RAM.  
+• Multi-core processor (Intel i3 or equivalent).  
+• Local deployment support via standard desktop/laptop.   
+• Cloud-based hosting for scalability (e.g., AWS, Google Cloud, or Microsoft Azure).  
 
-**Software:** 
-• Backend: Python, FastAPI/Flask 
-• Frontend: React/React Native 
-• Database & Hosting: Firebase 
-• Deployment & Scaling: Docker 
-• AI Processing: Integration with Groq's inference engine for LLM-based responses 
-• Third-party Integrations: API connectors for third-party service integration 
+**Software:**   
+• Backend: Python, FastAPI/Flask.  
+• Frontend: React/React Native.      
+• Database & Hosting: Firebase.     
+• Deployment & Scaling: Docker.  
+• AI Processing: Integration with Groq's inference engine for LLM-based responses.   
+• Third-party Integrations: API connectors for third-party service integration.  
 
 ## 3.2 System Design 
 The system will follow a modular design that supports both cloud deployment. Here’s an 
@@ -138,3 +138,54 @@ candidates.
 response embedding. 
 
 **• Step 3:** Select the response with the highest similarity score as the chatbot’s answer.
+
+<h1> 4. Implementation Details </h1>
+
+## 4.1 Backend Development
+
+**Current Status: API Testing Phase**
+
+We have started building the backend services, focusing on designing and implementing API endpoints that will handle chatbot interactions and database operations.
+
+**Implementation Details**
+
+Frameworks & Technologies: Python, Langchain, FastAPI, Groq LLM Integration, Datastax AstraDB
+
+**Modules Implemented:**
+
+• API Gateway to route services.  
+• Dual-Agent implementation for handling out-of-context queries.  
+• Chatbot interaction handling (query processing & response retrieval).  
+• Datastax AstraDB operations i.e. Creation, Updation, Retrieval.  
+
+**API Testing:**
+<h1 align="center">  
+  <img src="https://github.com/GauravPatil1444/Projects/blob/master/OWST%20Architecture.png?raw=true" width="fit-content">
+</h1>
+
+## 4.2 Frontend Development
+
+**Current Status: UI Testing and Improvements**
+
+We have started building the frontend for ORCA, focusing on a smooth user experience and interactive design elements.
+
+**Implementation Details**
+
+Frameworks & Technologies: React Native.
+
+**Modules Implemented:**
+
+• Animated splash screen for enhanced user experience.  
+• Chat interface designed for seamless interaction with the backend chatbot system.  
+• Integration of API calls to connect with backend services.  
+• Testing UI elements across different screen sizes and devices.  
+
+**Splash Screen:**
+<h1 align="center">  
+  <img src="https://github.com/GauravPatil1444/Projects/blob/master/Splash%20Screen.jpg?raw=true" width="340" height="640">
+</h1>
+
+**Chat Screen:**
+<h1 align="center">  
+  <img src="https://github.com/GauravPatil1444/Projects/blob/master/Chat%20Screen.jpg?raw=true" width="340" height="640">
+</h1>
