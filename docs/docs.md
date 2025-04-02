@@ -160,7 +160,7 @@ Frameworks & Technologies: Python, Langchain, FastAPI, Groq LLM Integration, Dat
 
 **API Testing:**
 <h1 align="center">  
-  <img src="https://github.com/GauravPatil1444/Projects/blob/master/OWST%20Architecture.png?raw=true" width="fit-content">
+  <img src="https://github.com/GauravPatil1444/Projects/blob/master/API%20Testing.png?raw=true" width="fit-content">
 </h1>
 
 ## 4.2 Frontend Development
