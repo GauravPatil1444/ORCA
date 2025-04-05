@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, File, UploadFile, Form
 from pydantic import BaseModel
 from typing import List, Dict
 import os
@@ -8,6 +8,8 @@ from astrapy import Database
 from upload import upload_data
 from astra_agent import Agent
 from astrapy.client import DataAPIClient
+import shutil
+from pdf_tool import pdfprocess
 
 load_dotenv()
 
@@ -33,18 +35,37 @@ def get_db():
         raise HTTPException(status_code=500, detail="Database connection is not available")
     return app.state.db
 
-class UploadRequest(BaseModel):
-    collection_name: str
-    data: List[Dict]
+FILE_CATEGORIES = {
+    "application/pdf": "pdfs",
+    "text/csv": "csvs",
+    "application/json": "jsons",
+    "image/jpeg": "images",
+    "image/png": "images",
+    "image/jpg": "images",
+    "image/webp": "images"
+}
 
 @app.post("/upload")
-async def upload(upload_request: UploadRequest):
-    db = get_db()
+async def upload(file: UploadFile = File(...),collection_name: str = Form(...)):
     try:
-        upload_data(db, upload_request.collection_name, upload_request.data)
-        return {"message": "Data uploaded successfully!"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        content_type = file.content_type
+        category = FILE_CATEGORIES.get(content_type)
+
+        if not category:
+            return {"error": "Unsupported file type"}
+        
+        file_path = os.path.join('./temp', file.filename)
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+    
+        uploadDocs = pdfprocess(file.filename)
+        db = get_db()
+        res = upload_data(db,collection_name,uploadDocs)
+        os.remove(f'./temp/{file.filename}')
+        return {"response":res}
+    except:
+        return {"error": "Something went wrong!"}
+
 
 class searchData(BaseModel):
     data: str
