@@ -6,8 +6,8 @@ def pdfprocess(file_path):
     loader = PyPDFLoader('./temp/'+file_path)
     docs = loader.load()
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=100,
+        chunk_size=1000,
+        chunk_overlap=200,
     )
     texts = text_splitter.split_documents(docs)
 

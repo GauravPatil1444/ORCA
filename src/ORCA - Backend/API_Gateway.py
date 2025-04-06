@@ -10,6 +10,7 @@ from astra_agent import Agent
 from astrapy.client import DataAPIClient
 import shutil
 from pdf_tool import pdfprocess
+import re
 
 load_dotenv()
 
@@ -48,6 +49,7 @@ FILE_CATEGORIES = {
 @app.post("/upload")
 async def upload(file: UploadFile = File(...),collection_name: str = Form(...)):
     try:
+        collection_name = re.sub(r'[^a-zA-Z0-9_]', '_', collection_name)
         content_type = file.content_type
         category = FILE_CATEGORIES.get(content_type)
 
@@ -63,8 +65,8 @@ async def upload(file: UploadFile = File(...),collection_name: str = Form(...)):
         res = upload_data(db,collection_name,uploadDocs)
         os.remove(f'./temp/{file.filename}')
         return {"response":res}
-    except:
-        return {"error": "Something went wrong!"}
+    except Exception as e:
+        return {"error": "Something went wrong!","reason":str(e)}
 
 
 class searchData(BaseModel):
@@ -73,8 +75,9 @@ class searchData(BaseModel):
 
 @app.post("/search")
 async def ask_orca(req: searchData, db: Database = Depends(get_db)):
+    collection_name = re.sub(r'[^a-zA-Z0-9_]', '_', req.collection_name)
     try:
-        collection = db.get_collection(req.collection_name)
+        collection = db.get_collection(collection_name)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Invalid collection: {str(e)}")
 

@@ -1,16 +1,19 @@
 from astrapy import Database, Collection
-from astrapy.constants import VectorMetric
-import astrapy
+# from astrapy.constants import VectorMetric
+from astrapy.info import CollectionDefinition
 
 def create_collection(database: Database, collection_name: str) -> Collection:
     
     collection = database.create_collection(
         collection_name,
-        metric=VectorMetric.COSINE,
-        service=CollectionVectorServiceOptions(
-            provider="nvidia",
-            model_name="NV-Embed-QA",
-        ),
+        definition=(
+            CollectionDefinition.builder()
+            .set_vector_service(
+                provider="nvidia",
+                model_name="NV-Embed-QA",
+            )
+            .build()
+        )
     )
     # print(f"Created collection: {collection.full_name}")
     return collection
