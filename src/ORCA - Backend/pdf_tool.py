@@ -1,13 +1,13 @@
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-def pdfprocess(file_path):
+def pdfprocess(file_path,range,overlap):
 
-    loader = PyPDFLoader('./temp/'+file_path)
+    loader = PyPDFLoader(file_path)
     docs = loader.load()
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=200,
+        chunk_size=range,
+        chunk_overlap=overlap,
     )
     texts = text_splitter.split_documents(docs)
 

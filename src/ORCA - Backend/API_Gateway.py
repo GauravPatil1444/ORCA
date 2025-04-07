@@ -10,6 +10,7 @@ from astra_agent import Agent
 from astrapy.client import DataAPIClient
 import shutil
 from pdf_tool import pdfprocess
+from advance_pdf_tool import adv_pdf
 import re
 
 load_dotenv()
@@ -46,8 +47,28 @@ FILE_CATEGORIES = {
     "image/webp": "images"
 }
 
+def document_type(file_path,category,pdfoption,range,regex,overlap):
+
+    if category=="pdfs":
+        if pdfoption=="adv":
+            return adv_pdf(file_path,regex)
+        else:
+            return pdfprocess(file_path,range,overlap)
+    
+    # elif category=="csvs":
+    #     return csvprocess(file_path)
+    
+    # elif category=="jsons":
+    #     return jsonprocess(file_path)
+    
+    # elif category=="images":
+    #     return imageprocess(file_path)
+    
+
+
+
 @app.post("/upload")
-async def upload(file: UploadFile = File(...),collection_name: str = Form(...)):
+async def upload(file: UploadFile = File(...),collection_name: str = Form(...),pdfoption: str = Form(...),regex: str = Form(...),range: int = Form(...),overlap: int = Form(...)):
     try:
         collection_name = re.sub(r'[^a-zA-Z0-9_]', '_', collection_name)
         content_type = file.content_type
@@ -60,7 +81,7 @@ async def upload(file: UploadFile = File(...),collection_name: str = Form(...)):
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
     
-        uploadDocs = pdfprocess(file.filename)
+        uploadDocs = document_type(file_path,category,pdfoption,range,regex,overlap)
         db = get_db()
         res = upload_data(db,collection_name,uploadDocs)
         os.remove(f'./temp/{file.filename}')
