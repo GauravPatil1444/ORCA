@@ -93,6 +93,7 @@ async def upload(file: UploadFile = File(...),collection_name: str = Form(...),p
 class searchData(BaseModel):
     data: str
     collection_name: str
+    prompt: str
 
 @app.post("/search")
 async def ask_orca(req: searchData, db: Database = Depends(get_db)):
@@ -101,8 +102,8 @@ async def ask_orca(req: searchData, db: Database = Depends(get_db)):
         collection = db.get_collection(collection_name)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Invalid collection: {str(e)}")
-
-    response = Agent(req.data, collection)
+    print(req.data,req.prompt)
+    response = Agent(req.data, collection, req.prompt)
     
     return {"response": response}
 
