@@ -26,7 +26,7 @@ def adv_pdf(file_path,regex):
             })
 
 
-    with open("data.json", "w") as json_file:
-        json.dump(uploadDocs, json_file, indent=4)
+    # with open("data.json", "w") as json_file:
+    #     json.dump(uploadDocs, json_file, indent=4)
     
     return uploadDocs

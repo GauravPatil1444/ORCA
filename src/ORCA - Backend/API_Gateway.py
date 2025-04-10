@@ -89,6 +89,13 @@ async def upload(file: UploadFile = File(...),collection_name: str = Form(...),p
     except Exception as e:
         return {"error": "Something went wrong!","reason":str(e)}
 
+class DeleteData(BaseModel):
+    collection_name: str
+
+@app.post("/delete")
+def delete_collection(req: DeleteData, db: Database = Depends(get_db)):
+    result = db.drop_collection(req.collection_name)
+    return result
 
 class searchData(BaseModel):
     data: str
