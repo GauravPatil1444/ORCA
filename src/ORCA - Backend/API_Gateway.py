@@ -9,9 +9,14 @@ from upload import upload_data
 from astra_agent import Agent
 from astrapy.client import DataAPIClient
 import shutil
-from pdf_tool import pdfprocess
+from pdf_web_tool import pdfprocess
 from advance_pdf_tool import adv_pdf
 import re
+from json_csv_tool import csvprocess
+from json_csv_tool import jsonprocess
+from pdf_web_tool import webprocess
+from OWST import embed
+from starlette.responses import HTMLResponse
 
 load_dotenv()
 
@@ -55,11 +60,11 @@ def document_type(file_path,category,pdfoption,range,regex,overlap):
         else:
             return pdfprocess(file_path,range,overlap)
     
-    # elif category=="csvs":
-    #     return csvprocess(file_path)
+    elif category=="csvs":
+        return csvprocess(file_path)
     
-    # elif category=="jsons":
-    #     return jsonprocess(file_path)
+    elif category=="jsons":
+        return jsonprocess(file_path)
     
     # elif category=="images":
     #     return imageprocess(file_path)
@@ -68,7 +73,7 @@ def document_type(file_path,category,pdfoption,range,regex,overlap):
 
 
 @app.post("/upload")
-async def upload(file: UploadFile = File(...),collection_name: str = Form(...),pdfoption: str = Form(...),regex: str = Form(...),range: int = Form(...),overlap: int = Form(...)):
+async def upload(file: UploadFile = File(...),collection_name: str = Form(...),pdfoption: str|None = Form(...),regex: str|None = Form(...),range: int|None = Form(...),overlap: int|None = Form(...)):
     try:
         collection_name = re.sub(r'[^a-zA-Z0-9_]', '_', collection_name)
         content_type = file.content_type
@@ -98,23 +103,56 @@ def delete_collection(req: DeleteData, db: Database = Depends(get_db)):
     return result
 
 class searchData(BaseModel):
-    data: str
+    data: str|None
     collection_name: str
-    prompt: str
+    prompt: str|None
 
 @app.post("/search")
-async def ask_orca(req: searchData, db: Database = Depends(get_db)):
+def ask_orca(req: searchData, db: Database = Depends(get_db)):
     collection_name = re.sub(r'[^a-zA-Z0-9_]', '_', req.collection_name)
     try:
         collection = db.get_collection(collection_name)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Invalid collection: {str(e)}")
-    print(req.data,req.prompt)
+    
     response = Agent(req.data, collection, req.prompt)
     
     return {"response": response}
 
 
+class OWSTData(BaseModel):
+    link: str
+    query: str
+    classes_to_remove: str|None
+
+@app.get("/owst")
+def owst(link: str, query: str, classes_to_remove: str):
+    try:
+        res = embed(link,query,classes_to_remove.split(','))
+        return HTMLResponse(content=res)
+    except Exception as e:
+        return e
+
+class webData(BaseModel):
+    link: str
+    collection_name: str
+    range: int
+    overlap:int
+
+@app.post("/webupload")
+async def web(req: webData, db: Database = Depends(get_db)):
+    try:
+        collection_name = re.sub(r'[^a-zA-Z0-9_]', '_', req.collection_name)
+
+        upload_docs = webprocess(req.link,req.range,req.overlap)
+        response = upload_data(db,collection_name,upload_docs)
+        
+        return {"response": response}
+    
+    except Exception as e:
+        return{"error":e}
+
+
 @app.get("/")
-def hello_world():
-    return "Welcome to ORCA - services are running successfully!"
+def hello_orca():
+    return "Welcome to ORCA - this is API Gateway and services are running successfully!"
