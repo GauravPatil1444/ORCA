@@ -3,7 +3,11 @@ langchain_community
 astrapy
 dotenv
 fastapi
+uvicorn
 groq
-"duckduckgo-search langchain-community"
+duckduckgo-search
+langchain_text_splitters
+pypdf
 requests
 beautifulsoup4
+python-multipart

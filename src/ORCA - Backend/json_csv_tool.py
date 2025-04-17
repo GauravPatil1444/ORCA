@@ -9,8 +9,6 @@ def csvprocess(file_path):
         for row in reader:
             json_data.append(row)
 
-    with open('./json_data.json', "w", encoding="utf-8") as json_file:
-        json.dump(json_data, json_file, indent=4)
     
     upload_data = []
     for item in json_data:

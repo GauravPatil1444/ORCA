@@ -1,6 +1,5 @@
 from pypdf import PdfReader
 import re
-import json
 
 def adv_pdf(file_path,regex):
     reader = PdfReader(file_path)
@@ -25,8 +24,4 @@ def adv_pdf(file_path,regex):
                 "$vectorize": str(item)
             })
 
-
-    # with open("data.json", "w") as json_file:
-    #     json.dump(uploadDocs, json_file, indent=4)
-    
     return uploadDocs

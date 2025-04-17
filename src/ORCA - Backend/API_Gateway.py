@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException, File, UploadFile, Form
 from pydantic import BaseModel
-from typing import List, Dict
 import os
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
