@@ -4,7 +4,7 @@
 Artificial Intelligence, Natural Language Processing
 
 ## Application
-ORCA is a web, mobile, and desktop-based chatbot creation platform that enables users to build and deploy AI-powered Q&A chatbots without any coding requirements. Designed for various applications, including customer support, education, research, and business automation, ORCA simplifies chatbot development through an intuitive interface.
+ORCA is a mobile chatbot creation platform that enables users to build and deploy AI-powered Q&A chatbots without any coding requirements. Designed for various applications, including customer support, education, research, and business automation, ORCA simplifies chatbot development through an intuitive interface.
 
 ## Hardware & Software Requirements
 
