@@ -15,6 +15,8 @@ from json_csv_tool import csvprocess
 from json_csv_tool import jsonprocess
 from pdf_web_tool import webprocess
 from OWST import embed
+from image_tool import imageprocess
+# from image_tool import imageprocess
 from starlette.responses import HTMLResponse
 
 load_dotenv()
@@ -65,8 +67,8 @@ def document_type(file_path,category,pdfoption,range,regex,overlap):
     elif category=="jsons":
         return jsonprocess(file_path)
     
-    # elif category=="images":
-    #     return imageprocess(file_path)
+    elif category=="images":
+        return imageprocess(file_path,range,overlap)
     
 
 

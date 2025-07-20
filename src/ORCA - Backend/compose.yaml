@@ -1,7 +1,7 @@
 services:
   web:
     build: .
-    image: orca:1.0.0
+    image: orca:1.1.0
     ports:
       - "8000:8000"
   

@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 from groq import Groq
 import os
-from ddg_agent import searchtool
 
 load_dotenv()
 
@@ -20,15 +19,14 @@ def Agent(question: str, collection, prompt:str):
             messages=[
                 {
                     "role": "user",
-                    "content": f"""You are virtual asistant providing asistance to users based on the context provided, 
-                    use that context to answer their query.{prompt}. never let them know you are refering any context. if context doesn't match the query just response with '404'
-                    
+                    "content": f"""You are virtual assistant named 'ORCA' providing assistance to users based on the context provided, 
+                    use that context to answer their query.{prompt}. never let them know you are refering any context. Also handle out of context queries.  
                     "context": {prompt_data}
                     "query": {question}
                     """,
                 }
             ],
-            model="llama-3.1-8b-instant",
+            model="meta-llama/llama-4-maverick-17b-128e-instruct",
         )
         res = chat_completion.choices[0].message.content
         if res == "404":
