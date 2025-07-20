@@ -29,8 +29,5 @@ def Agent(question: str, collection, prompt:str):
             model="meta-llama/llama-4-maverick-17b-128e-instruct",
         )
         res = chat_completion.choices[0].message.content
-        if res == "404":
-            return searchtool(question)
-        else:
-            return res
+        return res
         
