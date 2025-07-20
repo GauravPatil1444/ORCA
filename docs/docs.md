@@ -275,6 +275,12 @@ Website Chatbot: Handled real-time user queries, navigation support, and general
 Legal Assistance: Accurately interpreted legal documents and provided clear answers to legal questions, showing strong domain understanding.
 Academic Books: Served as a reliable virtual tutor, answering subject-specific queries based on academic content with clarity and precision. 
 
+<h1> Conclusion </h1>   
+ORCA Beta v1.0.0 underwent extensive testing across multiple real-world use cases to evaluate its performance, adaptability, and user experience. The testing phase focused on diverse applications including e-commerce, general website assistance, legal help, and academic knowledge support.
+E-commerce Chatbot: Delivered fast, relevant responses for product queries, improving customer engagement.
+Website Chatbot: Handled real-time user queries, navigation support, and general assistance effectively on dynamic websites.
+Legal Assistance: Accurately interpreted legal documents and provided clear answers to legal questions, showing strong domain understanding.
+Academic Books: Served as a reliable virtual tutor, answering subject-specific queries based on academic content with clarity and precision. 
 
 
 
