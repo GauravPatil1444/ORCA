@@ -33,11 +33,9 @@ def customsearch(query):
 
     return "\n".join(metadata)
 
-# print(customsearch("give me some info about computer engg placements in rcpit"))
 def service(link,query):
 
     res = customsearch(f"{link} {query}")
-    # print(res)
     def chat_model(model,message):
         chat_completion = client.chat.completions.create(
             messages=message,
@@ -45,7 +43,6 @@ def service(link,query):
         )
         return chat_completion.choices[0].message.content
 
-    # print(chat_model(res,question))
 
     message1 = [
         {
