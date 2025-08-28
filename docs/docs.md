@@ -68,6 +68,11 @@ The shift toward no-code platforms and the integration of Large Language Models 
 The system will follow a modular design that supports cloud deployment. Here’s an 
 overview of the architecture: 
 
+**ORCA Hybrid Architecture:**
+<h1 align="center">  
+  <img src="https://github.com/GauravPatil1444/Projects/blob/master/Screenshot%202025-08-28%20171958.png?raw=true" width="fit-content">
+</h1>
+ 
 **Retrieval Augmented Generation (RAG) Architecture:**
 <h1 align="center">  
   <img src="https://github.com/GauravPatil1444/Projects/blob/master/RAG%20Architecture.png?raw=true" width="fit-content">
