@@ -206,6 +206,27 @@ response embedding.
 
 • Beta release v1.0.0 - Performance & Bug testing in production environment.  
 
+<h4>Module 11 - Jun 20, 2025</h4> 
+
+• Authentication and Cloud-Sync implementation.  
+
+<h4>Module 12 - Jul 14, 2025</h4> 
+
+• Update Cloud Synchronization.  
+
+<h4>Module 13 - Jul 17, 2025</h4> 
+
+• APIScreen & WebScreen implementation.  
+
+<h6>APIScreen:</h6>
+<h1 align="center">  
+  <img src="https://github.com/GauravPatil1444/Projects/blob/master/Screenshot_2025-08-28-17-08-28-17_15f99a7ff97e9b752efb3734a54866e0.jpg?raw=true" width="340" height="640">
+</h1>
+
+<h4>Module 14 - Jul 29, 2025</h4> 
+
+• Release v1.1.0.  
+
 ## 4.2 Backend Development - Mar 19, 2025 to Apr 17, 2025
 
 <h3>Modules Implemented:</h3>  
@@ -249,6 +270,14 @@ response embedding.
 
 • Beta release v1.0.0 - Performance & Bug testing in production environment.   
 
+<h4>Module 8 - Jul 20, 2025</h4> 
+
+• ddg_Agent deletion and replacement with more advanced model (llama-4-maverick-17b-128e-instruct).
+
+<h4>Module 9 - Jul 29, 2025</h4> 
+
+• Release v1.1.0 - Image tool implementation.
+
 ## 4.3 DevOps
 
 <h3>Modules Implemented:</h3>  
@@ -256,7 +285,7 @@ response embedding.
 <h4>Module 1 - Apr 15, 2025</h4>  
 
 • Containerization - dockerized backend services (v1.0.0-beta).     
-• Deployment - deployed to google cloud run (v1.0.0-beta).   
+• Deployment - deployed to Google Cloud Run (v1.0.0-beta).   
 
 <h6>Containerization:</h6>
 <h1 align="center">  
@@ -268,20 +297,41 @@ response embedding.
   <img src="https://github.com/GauravPatil1444/Projects/blob/master/Screenshot%202025-04-18%20105719.png?raw=true" width="fit-content">
 </h1>
 
+<h4>Module 2 - Jul 20, 2025</h4>  
+
+• Containerization - dockerized backend services (v1.1.0).     
+• Deployment - deployed to Google Cloud Run (v1.1.0).   
+
+<h6>Containerization:</h6>
+<h1 align="center">  
+  <img src="https://github.com/GauravPatil1444/Projects/blob/master/Screenshot%202025-08-28%20165513.png?raw=true" width="fit-content">
+</h1>
+
+<h6>Deployment:</h6>
+<h1 align="center">  
+  <img src="https://github.com/GauravPatil1444/Projects/blob/master/Screenshot%202025-08-28%20170516.png?raw=true" width="fit-content">
+</h1>
+
+<h4>Module 3 - Jul 20, 2025</h4>  
+
+• Containerization - dockerized OCR service (v1.0.0).     
+• Deployment - deployed to Docker on Render (v1.0.0).   
+
+<h6>Containerization:</h6>
+<h1 align="center">  
+  <img src="https://github.com/GauravPatil1444/Projects/blob/master/Screenshot%202025-08-28%20163659.png?raw=true" width="fit-content">
+</h1>
+
+<h6>Deployment:</h6>
+<h1 align="center">  
+  <img src="https://github.com/GauravPatil1444/Projects/blob/master/Screenshot%202025-08-28%20163915.png?raw=true" width="fit-content">
+</h1>
+
 <h1> Conclusion </h1>   
-ORCA Beta v1.0.0 underwent extensive testing across multiple real-world use cases to evaluate its performance, adaptability, and user experience. The testing phase focused on diverse applications including e-commerce, general website assistance, legal help, and academic knowledge support.
+ORCA v1.1.0 underwent extensive testing across multiple real-world use cases to evaluate its performance, adaptability, and user experience. The testing phase focused on diverse applications including e-commerce, general website assistance, legal help, and academic knowledge support.
 E-commerce Chatbot: Delivered fast, relevant responses for product queries, improving customer engagement.
 Website Chatbot: Handled real-time user queries, navigation support, and general assistance effectively on dynamic websites.
 Legal Assistance: Accurately interpreted legal documents and provided clear answers to legal questions, showing strong domain understanding.
 Academic Books: Served as a reliable virtual tutor, answering subject-specific queries based on academic content with clarity and precision. 
-
-<h1> Conclusion </h1>   
-ORCA Beta v1.0.0 underwent extensive testing across multiple real-world use cases to evaluate its performance, adaptability, and user experience. The testing phase focused on diverse applications including e-commerce, general website assistance, legal help, and academic knowledge support.
-E-commerce Chatbot: Delivered fast, relevant responses for product queries, improving customer engagement.
-Website Chatbot: Handled real-time user queries, navigation support, and general assistance effectively on dynamic websites.
-Legal Assistance: Accurately interpreted legal documents and provided clear answers to legal questions, showing strong domain understanding.
-Academic Books: Served as a reliable virtual tutor, answering subject-specific queries based on academic content with clarity and precision. 
-
-
 
 
