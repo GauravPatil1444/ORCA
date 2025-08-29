@@ -14,9 +14,9 @@ ORCA is a mobile chatbot creation platform that enables users to build and deplo
 
 ### Software
 - **Backend:** Python, FastAPI/Flask
-- **Frontend:** React/React Native
-- **Database & Hosting:** Firebase
-- **Deployment & Scaling:** Docker for containerization
+- **Frontend:** React Native
+- **Database & Hosting:** Firebase, DataStax, Google Cloud Platform, Render.
+- **Deployment & Scaling:** Docker for containerization, Google Cloud Run, Docker on Render.
 - **AI Processing:** Integration with Groq's inference engine for LLM-based responses
 
 ## Input Required for Project
