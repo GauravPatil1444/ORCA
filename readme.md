@@ -44,8 +44,3 @@ ORCA is a no-code AI chatbot-building platform designed to help users create and
 
 Accessible across web, mobile, and potentially desktop platforms, ORCA offers a **user-friendly configuration interface**, allowing users to integrate chatbots with external services and share custom chatbot versions via APIs. The backend, powered by **Flask/FastAPI**, ensures seamless deployment and usability. ORCA democratizes AI chatbot development, making sophisticated conversational AI accessible to everyone without requiring programming expertise.
 
-## Team Members
-1. **Patil Gaurav Ajit** (TYDS-06)
-2. **Chaudhari Vivek Suresh** (TYDS-31)
-3. **Patil Rakesh Dnyaneshwar** (TYDS-33)
-4. **Neve Harsh Ramakant** (TYDS-48)
