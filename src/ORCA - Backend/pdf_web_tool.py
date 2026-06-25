@@ -1,6 +1,7 @@
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+import gc
 
 def process(docs,range,overlap):
     text_splitter = RecursiveCharacterTextSplitter(
@@ -19,11 +20,15 @@ def process(docs,range,overlap):
     return uploadDocs
 
 
-def pdfprocess(file_path,range,overlap):
-
+def pdfprocess(file_path, range_val, overlap):
     loader = PyPDFLoader(file_path)
     docs = loader.load()
-    return process(docs,range,overlap)
+    
+    # Force Python to destroy the loader and release the Windows file handle
+    del loader
+    gc.collect()
+    
+    return process(docs, range_val, overlap)
 
 
 def webprocess(file_path,range,overlap):

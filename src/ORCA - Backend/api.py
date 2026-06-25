@@ -17,6 +17,7 @@ from pdf_web_tool import webprocess
 from OWST import embed
 from image_tool import imageprocess
 from starlette.responses import HTMLResponse
+import traceback
 
 load_dotenv()
 
@@ -24,9 +25,10 @@ ASTRA_DB_APPLICATION_TOKEN = os.getenv("ASTRA_DB_APPLICATION_TOKEN")
 ASTRA_DB_API_ENDPOINT = os.getenv("ASTRA_DB_API_ENDPOINT")
 
 def connect_to_database() -> Database:
+    # Explicitly pass the token to the DataAPIClient constructor!
     client = DataAPIClient(ASTRA_DB_APPLICATION_TOKEN)
     database = client.get_database(ASTRA_DB_API_ENDPOINT)
-    print(f"Connected to database {database.info().name}")
+    print("Connected to the database successfully.", database)
     return database
 
 @asynccontextmanager
@@ -72,8 +74,10 @@ def document_type(file_path,category,pdfoption,range,regex,overlap):
 
 
 
+# Don't forget to add 'import traceback' at the top of api.py!
+
 @app.post("/upload")
-async def upload(file: UploadFile = File(...),collection_name: str = Form(...),pdfoption: str|None = Form(...),regex: str|None = Form(...),range: int|None = Form(...),overlap: int|None = Form(...)):
+async def upload(file: UploadFile = File(...), collection_name: str = Form(...), pdfoption: str|None = Form(...), regex: str|None = Form(...), range: int|None = Form(...), overlap: int|None = Form(...)):
     try:
         collection_name = re.sub(r'[^a-zA-Z0-9_]', '_', collection_name)
         content_type = file.content_type
@@ -88,10 +92,20 @@ async def upload(file: UploadFile = File(...),collection_name: str = Form(...),p
     
         uploadDocs = document_type(file_path,category,pdfoption,range,regex,overlap)
         db = get_db()
+        # db upload logic finishes...
         res = upload_data(db,collection_name,uploadDocs)
-        os.remove(f'./temp/{file.filename}')
-        return {"response":res}
+        
+        try:
+            os.remove(file_path)
+        except PermissionError:
+            print(f"Warning: Windows locked {file_path}. Skipping deletion to keep API running.")
+            
+        return {"response": res}
+        
     except Exception as e:
+        # THIS WILL PRINT THE EXACT FILE AND LINE NUMBER TO YOUR TERMINAL
+        import traceback
+        traceback.print_exc() 
         return {"error": "Something went wrong!","reason":str(e)}
 
 class DeleteData(BaseModel):
@@ -100,7 +114,7 @@ class DeleteData(BaseModel):
 @app.post("/delete")
 def delete_collection(req: DeleteData, db: Database = Depends(get_db)):
     result = db.drop_collection(req.collection_name)
-    return result
+    return {"res": "collection deleted"}
 
 class searchData(BaseModel):
     data: str|None
@@ -155,4 +169,4 @@ async def web(req: webData, db: Database = Depends(get_db)):
 
 @app.get("/")
 def hello_orca():
-    return "Welcome to ORCA - this is API Gateway and services are running successfully!"
+    return "services are running successfully!"

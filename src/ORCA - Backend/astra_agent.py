@@ -26,7 +26,7 @@ def Agent(question: str, collection, prompt:str):
                     """,
                 }
             ],
-            model="meta-llama/llama-4-scout-17b-16e-instruct",
+            model="openai/gpt-oss-120b",
         )
         res = chat_completion.choices[0].message.content
         return res
