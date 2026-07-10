@@ -7,8 +7,8 @@ from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
 from langgraph.checkpoint.memory import MemorySaver
-from agent_tools import create_agent_tools
-from langfuse_client import get_system_prompt
+from app.agent.tools import create_agent_tools
+from app.core.langfuse_client import get_system_prompt
 from dotenv import load_dotenv
 
 load_dotenv()

@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 import json
 from app.api.deps import get_user_collection
-from app.agent.graph import AstraAgent
+from app.agent.astra_agent import AstraAgent
 
 router = APIRouter()
 

@@ -1,8 +1,8 @@
 # app/storage/astra_db.py
 import re
-from astrapy import Database
+from astrapy import DataAPIClient, Database
 from astrapy.constants import VectorMetric
-from astrapy.info import CollectionDefinition, CollectionVectorOptions, VectorServiceOptions
+from astrapy.info import CollectionDefinition
 
 def get_user_collection_name(user_id: str) -> str:
     """
@@ -16,15 +16,18 @@ def create_collection(database: Database, collection_name: str):
     """
     Creates a new vector collection using the Nvidia NV-EmbedQA-E5-V5 model 
     and Cosine similarity metric as defined in the architecture specs.
+    Uses the builder pattern for CollectionDefinition (astrapy >= 1.0.0).
     """
-    collection_definition = CollectionDefinition(
-        vector=CollectionVectorOptions(
-            metric=VectorMetric.COSINE,
-            service=VectorServiceOptions(
-                provider="nvidia",
-                model_name="nvidia/nv-embedqa-e5-v5",
-            )
+    # Build collection definition using the fluent builder pattern
+    collection_definition = (
+        CollectionDefinition.builder()
+        .set_vector_dimension(1024)  # NV-EmbedQA-E5-V5 output dimension
+        .set_vector_metric(VectorMetric.COSINE)
+        .set_vector_service(
+            provider="nvidia",
+            model_name="nvidia/nv-embedqa-e5-v5",
         )
+        .build()
     )
     
     collection = database.create_collection(
