@@ -13,8 +13,12 @@ def get_user_collection(request: Request, user_id: str):
     """Resolves the single collection for the authenticated user."""
     db = get_db(request)
     collection_name = get_user_collection_name(user_id)
-    try:
-        return db.get_collection(collection_name)
-    except Exception:
-        # Auto-create if it doesn't exist yet (e.g., first chat before ingestion)
+    
+    # Check actual server state instead of relying on the get_collection() proxy
+    existing_collections = db.list_collection_names()
+    
+    if collection_name not in existing_collections:
+        print(f"* Auto-provisioning collection '{collection_name}' for chat...")
         return create_collection(db, collection_name)
+        
+    return db.get_collection(collection_name)

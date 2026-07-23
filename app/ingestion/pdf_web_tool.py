@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
-from metadata_utils import create_metadata
+from app.ingestion.metadata_utils import create_metadata
 
 def process(docs, range_val, overlap, source, category, config):
     text_splitter = RecursiveCharacterTextSplitter(
@@ -25,7 +25,7 @@ def process(docs, range_val, overlap, source, category, config):
         }) 
     return uploadDocs
 
-def pdfprocess(file_path, range_val, overlap):
+def process_pdf(file_path, range_val, overlap):
     loader = PyPDFLoader(file_path)
     docs = loader.load()
     del loader
@@ -35,7 +35,7 @@ def pdfprocess(file_path, range_val, overlap):
     config = {"chunk_size": range_val, "chunk_overlap": overlap}
     return process(docs, range_val, overlap, source, "pdf_standard", config)
 
-def webprocess(url, range_val, overlap, classes_to_remove=None):
+def process_web(url, range_val, overlap, classes_to_remove=None):
     # Fetch and parse HTML
     response = requests.get(url, timeout=10)
     response.raise_for_status()

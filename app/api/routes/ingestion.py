@@ -5,12 +5,15 @@ import shutil
 import re
 from app.api.deps import get_db
 from app.storage.astra_db import upload_data
-from app.ingestion.pdf_pipeline import process_pdf, process_pdf_regex
-from app.ingestion.tabular_pipeline import process_csv, process_json
-from app.ingestion.web_pipeline import process_web
-from app.ingestion.image_pipeline import process_image
+from app.ingestion.advance_pdf_tool import process_pdf_regex
+from app.ingestion.pdf_web_tool import process_web,process_pdf
+from app.ingestion.json_csv_tool import process_csv, process_json
+from app.ingestion.image_tool import process_image
 
 router = APIRouter()
+
+TEMP_DIR = os.path.join(os.getcwd(), "temp")
+os.makedirs(TEMP_DIR, exist_ok=True)
 
 FILE_CATEGORIES = {
     "application/pdf": "pdfs", "text/csv": "csvs", "application/json": "jsons",
@@ -34,7 +37,7 @@ async def upload_file(
     if not category:
         raise HTTPException(status_code=400, detail="Unsupported file type")
         
-    file_path = os.path.join('./temp', file.filename)
+    file_path = os.path.join(TEMP_DIR, file.filename)
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
         

@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from astrapy import DataAPIClient
 from app.core.config import get_settings
 from app.api.routes import chat, ingestion, management, owst
+from langfuse.decorators import langfuse_context
 
 settings = get_settings()
 
@@ -15,6 +16,7 @@ async def lifespan(app: FastAPI):
     app.state.db = client.get_database(settings.ASTRA_DB_API_ENDPOINT)
     print("* Connected to Astra DB successfully.")
     yield
+    langfuse_context.flush()
     # Shutdown
     app.state.db = None
 

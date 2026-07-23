@@ -1,6 +1,6 @@
 # app/storage/astra_db.py
 import re
-from astrapy import DataAPIClient, Database
+from astrapy import Database
 from astrapy.constants import VectorMetric
 from astrapy.info import CollectionDefinition
 
@@ -15,10 +15,8 @@ def get_user_collection_name(user_id: str) -> str:
 def create_collection(database: Database, collection_name: str):
     """
     Creates a new vector collection using the Nvidia NV-EmbedQA-E5-V5 model 
-    and Cosine similarity metric as defined in the architecture specs.
-    Uses the builder pattern for CollectionDefinition (astrapy >= 1.0.0).
+    and Cosine similarity metric.
     """
-    # Build collection definition using the fluent builder pattern
     collection_definition = (
         CollectionDefinition.builder()
         .set_vector_dimension(1024)  # NV-EmbedQA-E5-V5 output dimension
@@ -40,19 +38,23 @@ def create_collection(database: Database, collection_name: str):
 def upload_data(database: Database, user_id: str, documents: list) -> str:
     """
     Targets the user's single collection, creating it if it doesn't exist,
-    and inserts the processed documents (which already contain $vectorize and metadata).
+    and inserts the processed documents.
     """
     collection_name = get_user_collection_name(user_id)
     
-    try:
-        collection = database.get_collection(collection_name)
-    except Exception:
-        # Auto-provision the collection on the first upload or chat interaction
+    # 1. Fetch the actual list of collections from the server
+    existing_collections = database.list_collection_names()
+    
+    # 2. Create if it doesn't exist, otherwise get the proxy
+    if collection_name not in existing_collections:
+        print(f"* Collection '{collection_name}' not found. Auto-provisioning...")
         collection = create_collection(database, collection_name)
+    else:
+        collection = database.get_collection(collection_name)
         
     if not documents:
         return "No documents provided for insertion."
 
-    # AstraPy natively handles the 'data', '$vectorize', and 'metadata' root keys
+    # 3. Insert documents
     inserted = collection.insert_many(documents)
     return f"Successfully inserted {len(inserted.inserted_ids)} items into '{collection_name}'."

@@ -1,7 +1,6 @@
-# astra_agent.py
-import os
-from typing import TypedDict, Annotated
-from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
+# app/agent/graph.py
+from typing import TypedDict, Annotated, List, Optional
+from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_groq import ChatGroq
 from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
@@ -9,35 +8,62 @@ from langgraph.prebuilt import ToolNode
 from langgraph.checkpoint.memory import MemorySaver
 from app.agent.tools import create_agent_tools
 from app.core.langfuse_client import get_system_prompt
-from dotenv import load_dotenv
+from app.core.config import get_settings
 
-load_dotenv()
+settings = get_settings()
 
 class GraphState(TypedDict):
     messages: Annotated[list, add_messages]
     user_id: str
-    workspace_type: str # Added to track workspace classification
+    workspace_type: str
+    scope_filters: Optional[List[str]]
+    owst_context: Optional[List[dict]] # 🚨 Added back to state
 
 class AstraAgent:
     def __init__(self, user_collection):
-        # Initialize LLM and Tools (Stateless components)
-        self.llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0)
+        self.llm = ChatGroq(
+            model="openai/gpt-oss-120b", 
+            temperature=0, 
+            api_key=settings.GROQ_API_KEY
+        )
         self.tools = create_agent_tools(user_collection)
         self.llm_with_tools = self.llm.bind_tools(self.tools)
         
-        # Build Graph
         workflow = StateGraph(GraphState)
         
         def agent_node(state: GraphState):
-            messages = state["messages"]
+            messages = list(state["messages"])
             workspace = state.get("workspace_type", "default")
             
-            # Dynamically fetch the latest prompt from Langfuse per execution
             system_prompt = get_system_prompt(workspace)
+            context_instructions = ""
             
-            # Inject system prompt if not already present in the history
-            if not any(isinstance(m, SystemMessage) for m in messages):
-                messages = [SystemMessage(content=system_prompt)] + list(messages)
+            if state.get("scope_filters"):
+                context_instructions += f"\n\n[LOCAL DB RESTRICTION]\nThe user restricted local search to: {state['scope_filters']}. Use `filtered_knowledge_search` with these exact `sources`.\n"
+
+            # 🚨 MANDATORY OWST DIRECTIVE
+            if state.get("owst_context"):
+                ctx = state["owst_context"][0]
+                base_url = ctx.get("base_url", "")
+                context_instructions += "\n\n[MANDATORY LIVE WEB CONTEXT ATTACHED]\n"
+                context_instructions += f"The user has explicitly attached a live web domain: {base_url}.\n"
+                context_instructions += f"You MUST invoke the `owst_live_search` tool right now with `base_domain='{base_url}'`.\n"
+                context_instructions += "DO NOT answer from internal training data. Use the tool to find the exact deep-link.\n"
+
+            context_instructions += "\n\n[CRITICAL DIRECTIVE]\n"
+            context_instructions += "If a tool returns empty results, DO NOT call the tool again. Immediately synthesize a final text response.\n"
+
+            final_prompt = system_prompt + context_instructions
+            
+            system_msg_exists = False
+            for i, m in enumerate(messages):
+                if isinstance(m, SystemMessage):
+                    messages[i] = SystemMessage(content=final_prompt)
+                    system_msg_exists = True
+                    break
+            
+            if not system_msg_exists:
+                messages.insert(0, SystemMessage(content=final_prompt))
             
             response = self.llm_with_tools.invoke(messages)
             return {"messages": [response]}
@@ -57,14 +83,8 @@ class AstraAgent:
         workflow.add_conditional_edges("agent", should_continue, {"tools": "tools", END: END})
         workflow.add_edge("tools", "agent")
         
-        # Compile with in-memory checkpointer for multi-turn session state
         self.graph = workflow.compile(checkpointer=MemorySaver())
 
-    async def astream_chat(self, user_input: str, workspace_type: str, config: dict):
-        """Asynchronous generator for streaming LangGraph events."""
-        inputs = {
-            "messages": [HumanMessage(content=user_input)],
-            "workspace_type": workspace_type
-        }
-        async for event in self.graph.astream_events(inputs, config=config, version="v2"):
+    async def astream_events(self, inputs: dict, config: dict, version: str):
+        async for event in self.graph.astream_events(inputs, config=config, version=version):
             yield event

@@ -1,6 +1,7 @@
 # app/core/config.py
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+from typing import Optional
 
 class Settings(BaseSettings):
     # Astra DB
@@ -14,6 +15,7 @@ class Settings(BaseSettings):
     LANGFUSE_PUBLIC_KEY: str
     LANGFUSE_SECRET_KEY: str
     LANGFUSE_HOST: str = "https://cloud.langfuse.com"
+    LANGFUSE_BASE_URL: Optional[str] = None 
     
     # OWST Web Routing (Google Custom Search)
     GOOGLE_SEARCH_KEY: str

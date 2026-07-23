@@ -2,9 +2,9 @@
 import os
 import csv
 import json
-from metadata_utils import create_metadata
+from app.ingestion.metadata_utils import create_metadata
 
-def csvprocess(file_path):
+def process_csv(file_path):
     json_data = []
     with open(file_path, mode="r", newline='', encoding="utf-8") as csv_file:
         reader = csv.DictReader(csv_file)
@@ -23,7 +23,7 @@ def csvprocess(file_path):
         })
     return upload_data
 
-def jsonprocess(file_path):
+def process_json(file_path):
     with open(file_path, 'r') as file:
         data = json.load(file)
         

@@ -2,9 +2,9 @@
 import os
 import re
 from pypdf import PdfReader
-from metadata_utils import create_metadata
+from app.ingestion.metadata_utils import create_metadata
 
-def adv_pdf(file_path, regex):
+def process_pdf_regex(file_path, regex):
     reader = PdfReader(file_path)
     number_of_pages = len(reader.pages)
     pattern = rf"{regex}"

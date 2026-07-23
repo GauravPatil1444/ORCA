@@ -18,7 +18,6 @@ def get_system_prompt(workspace_type: str = "default") -> str:
     The Langfuse SDK automatically handles local caching to prevent API rate limits.
     """
     try:
-        # Fetches the prompt named 'default' (or 'legal', 'medical', etc.) from Langfuse
         prompt = langfuse.get_prompt(workspace_type)
         return prompt.prompt
     except Exception as e:
