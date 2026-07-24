@@ -1,11 +1,14 @@
 # app/main.py
+from dotenv import load_dotenv
+
+load_dotenv()
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from astrapy import DataAPIClient
 from app.core.config import get_settings
 from app.api.routes import chat, ingestion, management, owst
-from langfuse.decorators import langfuse_context
+from langfuse import get_client  #  v3: Correct import strategy
 
 settings = get_settings()
 
@@ -15,9 +18,12 @@ async def lifespan(app: FastAPI):
     client = DataAPIClient(settings.ASTRA_DB_APPLICATION_TOKEN)
     app.state.db = client.get_database(settings.ASTRA_DB_API_ENDPOINT)
     print("* Connected to Astra DB successfully.")
+    
     yield
-    langfuse_context.flush()
-    # Shutdown
+    
+    # Shutdown: Fetch global client and force flush remaining trace buffers
+    langfuse_client = get_client()  #  v3: Resolve the singleton client instance
+    langfuse_client.flush()         #  v3: Trigger the instance method cleanly
     app.state.db = None
 
 app = FastAPI(title="ORCA Agentic Backend", lifespan=lifespan)

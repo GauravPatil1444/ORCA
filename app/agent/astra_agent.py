@@ -1,6 +1,5 @@
-# app/agent/graph.py
 from typing import TypedDict, Annotated, List, Optional
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import SystemMessage
 from langchain_groq import ChatGroq
 from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
@@ -9,6 +8,7 @@ from langgraph.checkpoint.memory import MemorySaver
 from app.agent.tools import create_agent_tools
 from app.core.langfuse_client import get_system_prompt
 from app.core.config import get_settings
+from langfuse import observe
 
 settings = get_settings()
 
@@ -17,7 +17,7 @@ class GraphState(TypedDict):
     user_id: str
     workspace_type: str
     scope_filters: Optional[List[str]]
-    owst_context: Optional[List[dict]] # 🚨 Added back to state
+    owst_context: Optional[List[dict]]
 
 class AstraAgent:
     def __init__(self, user_collection):
@@ -31,39 +31,33 @@ class AstraAgent:
         
         workflow = StateGraph(GraphState)
         
+        @observe(as_type="span", name="agent_node")
         def agent_node(state: GraphState):
             messages = list(state["messages"])
             workspace = state.get("workspace_type", "default")
             
-            system_prompt = get_system_prompt(workspace)
-            context_instructions = ""
+            scope_filters = state.get("scope_filters")
+            owst_context = state.get("owst_context")
             
-            if state.get("scope_filters"):
-                context_instructions += f"\n\n[LOCAL DB RESTRICTION]\nThe user restricted local search to: {state['scope_filters']}. Use `filtered_knowledge_search` with these exact `sources`.\n"
+            attached_domain = ""
+            if owst_context and len(owst_context) > 0:
+                attached_domain = owst_context[0].get("base_url", "")
 
-            # 🚨 MANDATORY OWST DIRECTIVE
-            if state.get("owst_context"):
-                ctx = state["owst_context"][0]
-                base_url = ctx.get("base_url", "")
-                context_instructions += "\n\n[MANDATORY LIVE WEB CONTEXT ATTACHED]\n"
-                context_instructions += f"The user has explicitly attached a live web domain: {base_url}.\n"
-                context_instructions += f"You MUST invoke the `owst_live_search` tool right now with `base_domain='{base_url}'`.\n"
-                context_instructions += "DO NOT answer from internal training data. Use the tool to find the exact deep-link.\n"
-
-            context_instructions += "\n\n[CRITICAL DIRECTIVE]\n"
-            context_instructions += "If a tool returns empty results, DO NOT call the tool again. Immediately synthesize a final text response.\n"
-
-            final_prompt = system_prompt + context_instructions
+            system_prompt = get_system_prompt(
+                workspace,
+                scope_filters=scope_filters,
+                attached_domain=attached_domain
+            )
             
             system_msg_exists = False
             for i, m in enumerate(messages):
                 if isinstance(m, SystemMessage):
-                    messages[i] = SystemMessage(content=final_prompt)
+                    messages[i] = SystemMessage(content=system_prompt)
                     system_msg_exists = True
                     break
             
             if not system_msg_exists:
-                messages.insert(0, SystemMessage(content=final_prompt))
+                messages.insert(0, SystemMessage(content=system_prompt))
             
             response = self.llm_with_tools.invoke(messages)
             return {"messages": [response]}
@@ -85,6 +79,12 @@ class AstraAgent:
         
         self.graph = workflow.compile(checkpointer=MemorySaver())
 
-    async def astream_events(self, inputs: dict, config: dict, version: str):
-        async for event in self.graph.astream_events(inputs, config=config, version=version):
-            yield event
+    async def ainvoke(self, inputs: dict, config: dict):
+        if "callbacks" not in config:
+            try:
+                from app.core.langfuse_client import langfuse_handler
+                config["callbacks"] = [langfuse_handler]
+            except ImportError:
+                pass
+
+        return await self.graph.ainvoke(inputs, config=config)

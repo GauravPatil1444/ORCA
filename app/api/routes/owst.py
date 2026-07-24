@@ -9,8 +9,8 @@ from groq import Groq
 from app.services.owst_scraper import fetch_and_clean_html
 from app.core.langfuse_client import langfuse
 from app.core.config import get_settings
-
-from langfuse.decorators import observe, langfuse_context
+# CORRECT V4 IMPORTS: Use observe, get_client, and propagate_attributes
+from langfuse import observe, get_client, propagate_attributes 
 
 settings = get_settings()
 router = APIRouter()
@@ -19,10 +19,13 @@ groq_client = Groq(api_key=settings.GROQ_API_KEY)
 @observe(as_type="generation")
 def execute_groq_routing(messages: list, model_name: str) -> str:
     """Wraps the raw Groq SDK call to manually log the generation to Langfuse."""
-    langfuse_context.update_current_observation(
-        model=model_name,
-        input=messages
-    )
+    # Langfuse v4: Fetch the active OpenTelemetry span wrapper for the current function
+    client = get_client()
+    current_span = client.get_current_span()
+    
+    if current_span:
+        current_span.set_attribute("model", model_name)
+        current_span.set_attribute("input", json.dumps(messages))
     
     chat_completion = groq_client.chat.completions.create(
         messages=messages,
@@ -33,22 +36,18 @@ def execute_groq_routing(messages: list, model_name: str) -> str:
     
     output = chat_completion.choices[0].message.content
     
-    usage = None
-    if hasattr(chat_completion, 'usage') and chat_completion.usage:
-        usage = {
-            "prompt_tokens": chat_completion.usage.prompt_tokens,
-            "completion_tokens": chat_completion.usage.completion_tokens,
-            "total_tokens": chat_completion.usage.total_tokens
-        }
+    # Langfuse v4: Bind usage token counts to specific OTel attributes
+    if hasattr(chat_completion, 'usage') and chat_completion.usage and current_span:
+        current_span.set_attribute("usage.prompt_tokens", chat_completion.usage.prompt_tokens)
+        current_span.set_attribute("usage.completion_tokens", chat_completion.usage.completion_tokens)
+        current_span.set_attribute("usage.total_tokens", chat_completion.usage.total_tokens)
         
-    langfuse_context.update_current_observation(
-        output=output,
-        usage=usage
-    )
+    if current_span:
+        current_span.set_attribute("output", output)
     
     return output
 
-@observe()
+@observe(name="OWST_Iframe_Routing") # Langfuse v4: Custom names are set inside the decorator!
 @router.get("/owst", response_class=HTMLResponse)
 async def owst_iframe(
     link: str = Query(..., description="Base website or domain context"), 
@@ -57,12 +56,15 @@ async def owst_iframe(
 ):
     
     llm_output = ""
-    try:
-        # @observe() automatically captures the route arguments as the trace input!
-        langfuse_context.update_current_trace(
-            name="OWST_Iframe_Routing"
-        )
+    client = get_client()
+    
+    # Handle classes_to_remove early
+    if isinstance(classes_to_remove, str):
+        classes_list = [c.strip() for c in classes_to_remove.split(',') if c.strip()]
+    else:
+        classes_list = [str(c).strip() for c in classes_to_remove if str(c).strip()]
 
+    try:
         # 1. Fetch & compile prompt from Langfuse
         owst_prompt = langfuse.get_prompt("owst_router")
         compiled_prompt = owst_prompt.compile(query=f"{link} {query}")
@@ -104,28 +106,20 @@ async def owst_iframe(
         if not target_url:
             raise ValueError("Missing 'link' key in LLM output")
             
-        # Handle classes_to_remove
-        if isinstance(classes_to_remove, str):
-            classes_list = [c.strip() for c in classes_to_remove.split(',') if c.strip()]
-        else:
-            classes_list = [str(c).strip() for c in classes_to_remove if str(c).strip()]
-
-        langfuse_context.update_current_trace(
-            metadata={"target_url": target_url, "classes_removed": classes_list}
-        )
-
-        cleaned_html = fetch_and_clean_html(target_url, classes_list)
-        return HTMLResponse(content=cleaned_html, status_code=200)
+        # Langfuse v4 Attribute Propagation: 
+        # Scopes trace-level metadata down through downstream operations automatically.
+        with propagate_attributes(metadata={"target_url": target_url, "classes_removed": classes_list}):
+            cleaned_html = fetch_and_clean_html(target_url, classes_list)
+            return HTMLResponse(content=cleaned_html, status_code=200)
         
     except json.JSONDecodeError:
-        langfuse_context.update_current_trace(metadata={"error": f"Invalid JSON: {llm_output}"})
-        raise HTTPException(status_code=500, detail=f"Invalid JSON from LLM: {llm_output}")
+        with propagate_attributes(metadata={"error": f"Invalid JSON: {llm_output}"}):
+            raise HTTPException(status_code=500, detail=f"Invalid JSON from LLM: {llm_output}")
         
     except Exception as e:
-        # Langfuse automatically captures raised exceptions, but we add it to metadata for easy dashboard filtering
-        langfuse_context.update_current_trace(metadata={"error": str(e)})
-        raise HTTPException(status_code=500, detail=f"OWST routing failed: {str(e)}")
+        with propagate_attributes(metadata={"error": str(e)}):
+            raise HTTPException(status_code=500, detail=f"OWST routing failed: {str(e)}")
         
     finally:
-        # CRITICAL: Force flush the trace to Langfuse before closing the request
-        langfuse_context.flush()
+        # Langfuse v4: Flush straight from the global client object
+        client.flush()
