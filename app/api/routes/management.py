@@ -1,7 +1,7 @@
 # app/api/routes/management.py
 from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
-from app.api.deps import get_db, get_user_collection_name
+from app.api.deps import get_db, get_user_collection
 
 router = APIRouter()
 
@@ -19,7 +19,7 @@ async def delete_user_collection(req: DeleteUserCollectionRequest, request: Requ
     Use with caution as this wipes their entire knowledge base.
     """
     db = get_db(request)
-    collection_name = get_user_collection_name(req.user_id)
+    collection_name = get_user_collection(req.user_id)
     try:
         db.drop_collection(collection_name)
         return {"response": f"Collection '{collection_name}' deleted successfully."}
@@ -34,7 +34,7 @@ async def delete_document_by_source(req: DeleteDocumentRequest, request: Request
     This is used when a user deletes a specific file from the frontend UI.
     """
     db = get_db(request)
-    collection_name = get_user_collection_name(req.user_id)
+    collection_name = get_user_collection(req.user_id)
     
     try:
         collection = db.get_collection(collection_name)
