@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   orca-backend:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     container_name: orca_agentic_api
@@ -11,10 +9,9 @@ services:
     env_file:
       - .env
     volumes:
-      # Persist uploaded files between container restarts
       - ./temp:/app/temp
-      # Optional: Mount app code for hot-reloading during local development
-      - ./app:/app/app 
     restart: unless-stopped
-    # Override CMD for local development hot-reloading (remove --reload for production)
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    # For local dev hot-reload, uncomment:
+    # volumes:
+    #   - ./app:/app/app
+    # command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload

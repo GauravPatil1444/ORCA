@@ -1,31 +1,55 @@
-# Use official Python runtime as a parent image
-FROM python:3.11-slim
+# ============================================================
+# Stage 1: Builder — compile dependencies, then discard tools
+# ============================================================
+FROM python:3.12-slim AS builder
 
-# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Set work directory
-WORKDIR /app
+WORKDIR /build
 
-# Install system dependencies required for some python packages (like pypdf/build tools)
+# Build tools needed ONLY for compiling C extensions (lxml, uvloop, etc.)
+# These are NOT copied to the final image (~200MB saved)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    libxml2-dev \
+    libxslt1-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
+# Install into an isolated virtualenv for clean copying
 COPY requirements.txt .
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy project files
+RUN pip install --no-cache-dir --no-compile -r requirements.txt
+
+# ============================================================
+# Stage 2: Runtime — lean production image
+# ============================================================
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Copy ONLY the installed packages (no gcc, no build-essential, no -dev headers)
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy application code
 COPY . .
 
-# Create the temporary directory for file uploads
-RUN mkdir -p /app/temp
+# Create upload directory with correct ownership
+RUN mkdir -p /app/temp \
+    && useradd --create-home --shell /bin/bash appuser \
+    && chown -R appuser:appuser /app
 
-# Expose the port the app runs on
+USER appuser
+
 EXPOSE 8000
 
-# Run the application using Uvicorn
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/')" || exit 1
+
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,31 +1,40 @@
-# Core API & Server
-fastapi==0.111.0
-uvicorn[standard]==0.30.1
-python-multipart==0.0.9
-pydantic==2.7.4
-pydantic-settings==2.3.4
+# ============================================================
+# ORCA Agentic Backend — requirements.txt
+# ============================================================
 
-# Database & Vector Storage
+# --- Core API & Server ---
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+pydantic-settings
+
+# --- Database & Vector Storage ---
 astrapy
 
-# LangChain & LangGraph Ecosystem
+# --- LangChain & LangGraph Ecosystem ---
+langchain
+langchain_community
 langchain-core
-langchain-community
-langchain-text-splitters==0.2.2
-langchain-groq==0.1.6
-langgraph==0.1.8
+langchain-groq
+langchain-text-splitters
+langgraph
 
-# Observability & Prompt Management
-langfuse==2.36.2
+# --- Observability & Prompt Management ---
+langfuse
 
-# LLM Providers
+# --- LLM Providers (Raw SDK) ---
 groq
 
-httpx<0.28.0
-googlesearch-python
+# --- HTTP Clients ---
+httpx
+requests
 
-# Ingestion & Processing Utilities
-requests==2.32.3
-beautifulsoup4==4.12.3
-pypdf==4.2.0
-python-dotenv==1.0.1
+# --- Ingestion & Document Processing ---
+beautifulsoup4
+lxml
+pypdf
+pandas
+
+# --- Environment & Configuration ---
+python-dotenv
