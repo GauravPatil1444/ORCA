@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+langchain = "*"
+astrapy = "*"
+fastapi = "*"
+dotenv = "*"
+uvicorn = "*"
+duckduckgo-search = "*"
+langchain-groq = "*"
+langchain-community = "*"
+python-multipart = "*"
+pypdf = "*"
+langchain-text-splitters = "*"
+requests = "*"
+beautifulsoup4 = "*"
+pytesseract = "*"
+pillow = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"
